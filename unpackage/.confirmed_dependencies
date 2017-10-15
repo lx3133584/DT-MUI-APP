@@ -1,0 +1,114 @@
+{
+	"index.html": {
+		"resources": [
+			"js/mui.min.js",
+			"css/mui.min.css"
+		],
+		"refer": [
+			"page/login.html"
+		]
+	},
+	"page/login.html": {
+		"resources": [
+			"fonts/mui.ttf",
+			"image/login_logo.png",
+			"js/mui.min.js",
+			"css/mui.min.css"
+		],
+		"refer": [
+			"page/home.html",
+			"page/tab.html"
+		]
+	},
+	"page/home.html": {
+		"resources": [
+			"image/zuanshi_5.png",
+			"image/home_sao.png",
+			"image/zuanshi_1.png",
+			"image/home_pay.png",
+			"image/zuanshi_4.png",
+			"image/home_bao.png",
+			"image/zuanshi_7.png",
+			"image/home_info.png",
+			"image/zuanshi_2.png",
+			"image/zuanshi_8.png",
+			"image/zuanshi_6.png",
+			"image/home_get.png",
+			"image/zuanshi_88.png",
+			"image/zuanshi_3.png",
+			"js/mui.min.js",
+			"css/mui.min.css"
+		],
+		"refer": [
+			"page/center.html"
+		]
+	},
+	"page/friend.html": {
+		"resources": [
+			"image/friend_qun.png",
+			"image/friend_new.png"
+		],
+		"refer": [
+			"page/message.html"
+		]
+	},
+	"page/center.html": {
+		"resources": [
+			"image/my_picture.png",
+			"image/my_team.png",
+			"image/my_code.png",
+			"image/my_config.png",
+			"image/my_cash.png",
+			"image/my_center.png",
+			"image/my_service.png",
+			"image/my_class.png",
+			"image/my_friend.png"
+		],
+		"refer": [
+			"page/friend.html",
+			"page/login.html"
+		]
+	},
+	"page/tab.html": {
+		"resources": [
+			"page/home.html",
+			"js/mui.min.js",
+			"fonts/mui.ttf",
+			"css/mui.min.css"
+		],
+		"refer": [
+			"page/message.html",
+			"page/friend.html",
+			"page/home.html",
+			"page/center.html"
+		]
+	},
+	"page/message.html": {
+		"refer": [
+			"page/chatFriend.html",
+			"page/chatGroup.html"
+		],
+		"resources": [
+			"css/mui.min.css",
+			"js/mui.min.js",
+			"fonts/mui.ttf"
+		]
+	},
+	"page/chatFriend.html": {
+		"resources": [
+			"js/vue.min.js",
+			"js/mui.min.js",
+			"fonts/mui.ttf",
+			"css/mui.min.css"
+		]
+	},
+	"page/chatGroup.html": {
+		"resources": [
+			"js/mui.imageViewer.js",
+			"js/arttmpl.js",
+			"js/mui.min.js",
+			"fonts/mui.ttf",
+			"css/mui.min.css"
+		]
+	}
+}

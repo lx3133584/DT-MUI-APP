@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<style>
+			span{
+				font-size:18px;
+			}
+			h5 {
+				margin: 5px 7px;
+			}
+			.mui_register_top{
+				text-align:center;
+				margin:30px 0 20px 0 ;
+			}
+			.mui_register_name{
+				margin:15px 0 25px 0;
+				font-size:15px;
+			}
+			.mui_button{
+				width:90%;
+				margin:0 auto;
+			}
+			.mui_code{
+				position:relative;
+			}
+			.mui_code_btn{
+				position:absolute;
+				top:10px;
+				right:10px;
+				color:#2A93E9;
+				font-size:13px;
+			}
+			.mui-toast-container {bottom: 60% !important;}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"><span>返回</span></a>
+			<h1 class="mui-title">注册</h1>
+		</header>
+		<div class="mui-content">
+			<div class="mui_register_top">
+				<div><img src="../image/login_logo.png" width="90px" height="90px"/></div>
+				<div class="mui_register_name">请填写您注册账号的信息</div>
+			</div>
+			<div class="mui-content-padded" style="margin: 10px 0;">
+				<form class="mui-input-group">
+					<div class="mui-input-row">
+						<label style="font-size:13px;">账号</label>
+						<input type="text" placeholder="请输入账号" style="font-size:13px;">
+					</div>
+					<div class="mui-input-row">
+						<label style="font-size:13px;">昵称</label>
+						<input id="cn_name" type="text" placeholder="请输入昵称" style="font-size:13px;">
+					</div>
+					<div class="mui-input-row">
+						<label style="font-size:13px;">登录密码</label>
+						<input id="password" type="password" placeholder="请输入登录密码" style="font-size:13px;">
+					</div>
+					<div class="mui-input-row">
+						<label style="font-size:13px;">确认登录密码</label>
+						<input id="password2" type="password" placeholder="请确认登录密码" style="font-size:13px;">
+					</div>
+					<div class="mui-input-row">
+						<label style="font-size:13px;">二级密码</label>
+						<input id="second_password" type="password" placeholder="请输入二级密码" style="font-size:13px;">
+					</div>
+					<div class="mui-input-row">
+						<label style="font-size:13px;">确认二级密码</label>
+						<input type="password" placeholder="请确认二级密码" style="font-size:13px;">
+					</div>
+					<div class="mui-input-row">
+						<label style="font-size:13px;">手机号码</label>
+						<input id="phone" type="text" placeholder="请输入手机号码" style="font-size:13px;">
+					</div>
+					<div class="mui-input-row mui_code">
+						<label style="font-size:13px;">手机验证码</label>
+						<input id="note_code" type="text" placeholder="请输入手机验证码" style="font-size:13px;">
+						<div id="note_code_btn" class="mui_code_btn">获取验证码</div>
+					</div>
+
+				</form>
+			</div>
+			<div class="mui_button">
+				<button id="register" type="button" class="mui-btn mui-btn-success mui-btn-block" style="line-height:15px;margin:30px 0;">注册</button>
+			</div>
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script>
+			//mui初始化
+			mui.init();
+			document.getElementById("note_code_btn").addEventListener('tap', function() {
+				var phone = document.getElementById("phone").value;
+				if (phone === '') {
+					mui.toast('请输入手机号码')
+				} else {
+					mui.ajax('http://communication.123xiaolin.cn/api/users/sendRegisterNoteCode',{
+						data:{
+					        phone: phone
+						},
+						dataType:'json',//服务器返回json格式数据
+						type:'post',//HTTP请求类型
+						timeout:10000,//超时时间设置为10秒；
+						headers:{'Content-Type':'application/json'},	              
+						success:function(resp){
+							if (resp.ret === 1) {
+								mui.toast(resp.msg);
+							} else if (resp.ret === 0) {
+								mui.toast(resp.msg);
+							}
+						},
+						error:function(xhr,type,errorThrown){
+							console.log(type);
+						}
+					});
+				}
+			})
+			document.getElementById("register").addEventListener('tap', function() {
+				var cn_name = document.getElementById("cn_name").value;
+				var password = document.getElementById("password").value;
+				var password2 = document.getElementById("password2").value;
+				var second_password = document.getElementById("second_password").value;
+				var phone = document.getElementById("phone").value;
+				var note_code = document.getElementById("note_code").value;
+				var name;
+				if (password !== password2) {
+					mui.toast('两次输入的登录密码不一致');
+				} else {
+					mui.ajax('http://communication.123xiaolin.cn/api/users/register',{
+						data:{
+							cn_name: cn_name,
+					        password: password,
+					        name: name,
+					        second_password: second_password,
+					        phone: phone,
+					        note_code: note_code
+						},
+						dataType:'json',//服务器返回json格式数据
+						type:'post',//HTTP请求类型
+						timeout:10000,//超时时间设置为10秒；
+						headers:{'Content-Type':'application/json'},	              
+						success:function(resp){
+							if (resp.ret === 1) {
+								mui.toast(resp.msg);
+								mui.openWindow({
+									url: 'login.html'
+								})
+							} else if (resp.ret === 0) {
+								mui.toast(resp.msg);
+							}
+						},
+						error:function(xhr,type,errorThrown){
+							console.log(type);
+						}
+					});
+				}
+			});
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<style>
+			.oa-contact-cell.mui-table .mui-table-cell {
+				padding: 11px 0;
+				vertical-align: middle;
+			}
+			
+			.oa-contact-cell {
+				position: relative;
+				margin: -11px 0;
+			}
+	
+			.oa-contact-avatar {
+				width: 75px;
+			}
+			.oa-contact-avatar img {
+				width:50px;
+				height:50px;
+			}
+			.oa-contact-content {
+				width: 100%;
+			}
+			.oa-contact-name {
+				margin-right: 20px;
+			}
+			.oa-contact-name, oa-contact-position {
+				float: left;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<div id="message" class="mui-control-content mui-active">
+				<ul class="mui-table-view" id="chatlist">
+				</ul>
+			</div>
+		</div>
+		
+		<div style="height:40px"></div>
+	</body>
+	<script src="../js/mui.min.js"></script>
+	<script>
+		mui.init();
+		if (!localStorage.getItem("TOKEN")) {
+			mui.openWindow({
+				url: 'login.html'
+			})
+		} else {
+//			消息列表
+			mui.ajax('http://communication.123xiaolin.cn/api/message/messageList',{
+				dataType:'json',//服务器返回json格式数据
+				type:'post',//HTTP请求类型
+				timeout:10000,//超时时间设置为10秒；
+				headers:{
+					'Content-Type':'application/json',
+					'Authorization': localStorage.getItem("TOKEN")
+				},
+				success:function(resp){
+					if (resp.ret === 1) {
+						 var list = document.getElementById("chatlist");
+						 var fragment = document.createDocumentFragment();
+                			 var li;
+						 for (var i in resp.data) {
+						 	var item = resp.data[i]
+						 	li = document.createElement('li');
+						 	if (item.type === 1) {
+						 		li.innerHTML = '<li class="mui-table-view-cell" style="border-top:1px solid #d1d1d1"><div class="mui-slider-right mui-disabled"><a class="mui-btn mui-btn-red mui-icon mui-icon-trash"></a></div><div class="mui-slider-handle"><div class="mui-table-cell"><div class="mui-slider-cell "><div class="oa-contact-cell mui-table"><div class="oa-contact-avatar mui-table-cell"><img src="' + 'http://communication.123xiaolin.cn' + item.friend_user.avatar + '" /></div><div class="oa-contact-content mui-table-cell"><div class="mui-clearfix"><div class="oa-contact-name">' + item.friend_user.cn_name + '</div><span class="oa-contact-position mui-h6"></span></div><p class="oa-contact-email mui-h6">' + item.message_body + '</p></div></div></div></div></div></li>'
+						 		li.addEventListener('tap', function() {
+						 			mui.openWindow({
+										url: 'chatFriend.html',
+										extras:{
+									        id: item.friend_user_id  //扩展参数
+									    }
+									})
+						 		})
+						 	} if (item.type === 2) {
+						 		li.innerHTML = '<li class="mui-table-view-cell" style="border-top:1px solid #d1d1d1"><div class="mui-slider-right mui-disabled"><a class="mui-btn mui-btn-red mui-icon mui-icon-trash"></a></div><div class="mui-slider-handle"><div class="mui-table-cell"><div class="mui-slider-cell "><div class="oa-contact-cell mui-table"><div class="oa-contact-avatar mui-table-cell"><img src="' + 'http://communication.123xiaolin.cn' + item.group.group.admin.avatar + '"/></div><div class="oa-contact-content mui-table-cell"><div class="mui-clearfix"><div class="oa-contact-name">' + item.group.group.group_name + ' ' + '(' + item.group.user_num + ')' + '</div><span class="oa-contact-position mui-h6">群聊</span></div><p class="oa-contact-email mui-h6">' + '群主：' + item.group.group.admin.cn_name + '</p></div></div></div></div></div></li>'
+						 		li.addEventListener('tap', function() {
+						 			mui.openWindow({
+										url: 'chatGroup.html',
+										extras:{
+									        id: item.group_id  //扩展参数
+									    }
+									})
+						 		})
+						 	}
+						 	fragment.appendChild(li);
+						 }
+						 list.appendChild(fragment)
+					}
+				}
+			});
+		}
+		
+	</script>
+</html>

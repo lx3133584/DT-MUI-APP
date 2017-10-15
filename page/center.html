@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<style>
+			.margin_top_20{
+				margin-top:20px;
+			}
+			.mui_name_location{
+				padding:6px 0 0 60px;font-size:14px;
+			}
+			.mui_center_top{
+				background-color:#1E82D2;
+				padding:15px 0 20px 0;
+				color:#fff;
+			}
+			.mui-navigate-right.mui-active{
+				background-color:#1E82D2;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content" id="centerinfo">
+		    	<ul id="centertop" class=" mui_center_top" style="margin:0;">
+				<li class="mui-table-view-cell mui-media">
+					<a class="mui-navigate-right mui-disabled">
+						<img class="mui-media-object mui-pull-left" id="avatar" src="../image/my_center.png" width="70px">
+						<div class="mui-media-body" style="padding:10px 0 0 100px">
+							<span id="name">
+								
+							</span>
+							<p class='mui-ellipsis' id="phone" style="color:#fff;">15084828763</p>
+						</div>
+					</a>
+				</li>
+			</ul>
+			<ul class="mui-table-view mui-table-view-chevron margin_top_20">
+				<li class="mui-table-view-cell mui-media">
+					<a class="mui-navigate-right">
+						<img class="mui-pull-left" src="../image/my_friend.png"  width="30px" height="30px">
+						<div class="mui_name_location">好友动态</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell mui-media">
+					<a class="mui-navigate-right">
+						<img class="mui-pull-left" src="../image/my_picture.png"  width="28px" height="25px">
+						<div class="mui_name_location">我的相册</div>
+					</a>
+				</li>
+			</ul>
+			<ul class="mui-table-view mui-table-view-chevron margin_top_20">
+				<li class="mui-table-view-cell mui-media">
+					<a class="mui-navigate-right">
+						<img class="mui-pull-left" src="../image/my_cash.png"  width="28px" height="30px">
+						<div class="mui_name_location">资产</div>
+					</a>
+				</li>
+			</ul>
+			<ul class="mui-table-view mui-table-view-chevron margin_top_20">
+				<li class="mui-table-view-cell mui-media">
+					<a class="mui-navigate-right">
+						<img class="mui-pull-left" src="../image/my_class.png"  width="28px" height="30px">
+						<div class="mui_name_location">我的等级</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell mui-media">
+					<a class="mui-navigate-right">
+						<img class="mui-pull-left" src="../image/my_team.png"  width="28px" height="30px">
+						<div class="mui_name_location">我的团队</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell mui-media">
+					<a class="mui-navigate-right">
+						<img class="mui-pull-left" src="../image/my_code.png"  width="28px" height="29px">
+						<div class="mui_name_location">我的推广二维码</div>
+					</a>
+				</li>
+			</ul>
+			<ul class="mui-table-view mui-table-view-chevron margin_top_20">
+				<li class="mui-table-view-cell mui-media">
+					<a class="mui-navigate-right">
+						<img class="mui-pull-left" src="../image/my_service.png"  width="30px" height="30px">
+						<div class="mui_name_location">客服中心</div>
+					</a>
+				</li>
+			</ul>
+			<ul class="mui-table-view mui-table-view-chevron margin_top_20">
+				<li class="mui-table-view-cell mui-media">
+					<a class="mui-navigate-right">
+						<img class="mui-pull-left" src="../image/my_config.png"  width="30px" height="30px">
+						<div class="mui_name_location">设置</div>
+					</a>
+				</li>
+			</ul>
+			<ul class="mui-table-view margin_top_20">
+				<li id="loyout" class="mui-table-view-cell" style="text-align: center;line-height:30px;font-size:15px">
+					<a>退出</a>
+				</li>
+			</ul>
+		</div>
+		
+		<div style="height:40px"></div>
+	</body>
+	<script src="../js/mui.min.js"></script>
+	<script>
+		mui.init();
+		if (!localStorage.getItem("TOKEN")) {
+			document.getElementById("num").innerHTML = 0;
+			mui.openWindow({
+				url: 'login.html'
+			})
+		} else {
+//			个人信息
+			mui.ajax('http://communication.123xiaolin.cn/api/user/getUserInfo',{
+				dataType:'json',//服务器返回json格式数据
+				type:'post',//HTTP请求类型
+				timeout:10000,//超时时间设置为10秒；
+				headers:{
+					'Content-Type':'application/json',
+					'Authorization': localStorage.getItem("TOKEN")
+				},
+				success:function(resp){
+					if (resp.ret === 1) {
+						var item = resp.data
+						document.getElementById("name").innerHTML = item.cn_name
+						document.getElementById("phone").innerHTML = item.phone
+						item.avatar !== '/default.png' && (document.getElementById("avatar").src = item.avatar)
+					}
+				},
+				error:function(xhr,type,errorThrown){
+					console.log(type);
+				}
+			});
+		}
+		document.getElementById("loyout").addEventListener('tap', function() {
+			var btnArray = ['否', '是'];
+			mui.confirm('确定要退出登录吗？', '温馨提示', btnArray, function(e) {
+				if (e.index == 1) {
+					localStorage.removeItem("TOKEN")
+					mui.openWindow({
+						url: 'login.html'
+					})
+				}
+			})
+		})
+	</script>
+</html>

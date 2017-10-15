@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<style>
+			h5 {
+				margin: 5px 7px;
+			}
+			.mui_login_top{
+				text-align:center;
+				margin:30px 0 40px 0 ;
+			}
+			.mui_button{
+				width:90%;
+				margin:0 auto;
+			}
+			.mui_bottom{
+				width:80%;
+				margin:30px auto 0;
+				text-align:center;
+			}
+			.mui-toast-container {bottom: 60% !important;}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<h1 class="mui-title">登录</h1>
+		</header>
+		<div class="mui-content">
+			<div class="mui_login_top">
+				<img src="../image/login_logo.png" width="90px" height="90px"/>
+			</div>
+			<div class="mui-content-padded" style="margin: 10px 0;">
+				<form class="mui-input-group">
+					<div class="mui-input-row">
+						<label>账号</label>
+						<input id="phone" type="text" placeholder="请输入手机号码" style="font-size:14px;">
+					</div>
+					<div class="mui-input-row mui-password">
+						<label>密码</label>
+						<input id="password" type="password" placeholder="请输入密码" style="font-size:14px;" class="mui-input-password">
+					</div>
+				</form>
+			</div>
+			<div class="mui_button">
+				<button id='login' type="button" class="mui-btn mui-btn-primary mui-btn-block" style="line-height:15px;margin-top:40px;">登录</button>
+				<button id="register" type="button" class="mui-btn mui-btn-success mui-btn-block" style="line-height:15px;margin-top:20px;">注册</button>
+			</div>
+			<div class="mui_bottom">
+				<div class="link-area">
+					<a id='message'>短信验证码登录</a> <span class="spliter">|</span> <a id='forget'>忘记密码?</a>
+				</div>
+			</div>
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script>
+			//mui初始化
+			mui.init();
+			document.getElementById("login").addEventListener('tap', function() {
+				var phone = document.getElementById("phone").value;
+				var password = document.getElementById("password").value;
+				mui.ajax('http://communication.123xiaolin.cn/api/users/login',{
+					data:{
+						phone:phone,
+						password:password
+					},
+					dataType:'json',//服务器返回json格式数据
+					type:'post',//HTTP请求类型
+					timeout:10000,//超时时间设置为10秒；
+					headers:{'Content-Type':'application/json'},	              
+					success:function(resp){
+						if (resp.ret === 1) {
+							mui.toast(resp.msg, null);
+							localStorage.setItem("TOKEN", resp.data.token);
+							mui.openWindow({
+								url: 'tab.html'
+							})
+						} else if (resp.ret === 0) {
+							mui.alert(resp.msg, "温馨提示", null); 
+						}
+					},
+					error:function(xhr,type,errorThrown){
+						console.log(type);
+					}
+				});
+			});
+			document.getElementById("register").addEventListener('tap', function() {
+				mui.openWindow({
+					url: 'register.html'
+				})
+			})
+			document.getElementById("message").addEventListener('tap', function() {
+				mui.openWindow({
+					url: 'messageCode.html'
+				})
+			})
+			document.getElementById("forget").addEventListener('tap', function() {
+				mui.openWindow({
+					url: 'forget.html'
+				})
+			})
+		</script>
+	</body>
+
+</html>
