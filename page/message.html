@@ -78,9 +78,9 @@
 						 		li.innerHTML = '<li class="mui-table-view-cell" style="border-top:1px solid #d1d1d1"><div class="mui-slider-right mui-disabled"><a class="mui-btn mui-btn-red mui-icon mui-icon-trash"></a></div><div class="mui-slider-handle"><div class="mui-table-cell"><div class="mui-slider-cell "><div class="oa-contact-cell mui-table"><div class="oa-contact-avatar mui-table-cell"><img src="' + 'http://communication.123xiaolin.cn' + item.friend_user.avatar + '" /></div><div class="oa-contact-content mui-table-cell"><div class="mui-clearfix"><div class="oa-contact-name">' + item.friend_user.cn_name + '</div><span class="oa-contact-position mui-h6"></span></div><p class="oa-contact-email mui-h6">' + item.message_body + '</p></div></div></div></div></div></li>'
 						 		li.addEventListener('tap', function() {
 						 			mui.openWindow({
-										url: 'chatFriend.html',
+										url: 'chatFriend.html?id=1',
 										extras:{
-									        id: item.friend_user_id  //扩展参数
+									        _id: item.friend_user_id  //扩展参数
 									    }
 									})
 						 		})
@@ -90,7 +90,7 @@
 						 			mui.openWindow({
 										url: 'chatGroup.html',
 										extras:{
-									        id: item.group_id  //扩展参数
+									        _id: item.group_id  //扩展参数
 									    }
 									})
 						 		})

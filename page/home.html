@@ -128,5 +128,10 @@
 	<script src="../js/mui.min.js"></script>
 	<script>
 		mui.init();
+		mui('#scan')[0].addEventListener('tap', function() {
+			mui.openWindow({
+				url: 'scan.html'
+			})
+		})
 	</script>
 </html>

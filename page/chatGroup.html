@@ -6,7 +6,6 @@
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<title></title>
 		<link href="../css/mui.min.css" rel="stylesheet" />
-		<link rel="stylesheet" type="text/css" href="../css/app.css" />
 		<link href="../css/mui.imageviewer.css" rel="stylesheet" />
 		<style>
 			html,
@@ -314,32 +313,9 @@
 				<span class="mui-icon mui-icon-left-nav"></span>返回</button>
 			<a class="mui-icon mui-icon-gear mui-pull-right"></a>
 		</header>
-		<pre id='h'></pre>
-		<script id='msg-template' type="text/template">
-			<% for(var i in record){ var item=record[i]; %>
-				<div class="msg-item <%= (item.sender=='self'?' msg-item-self':'') %>" msg-type='<%=(item.type)%>' msg-content='<%=(item.content)%>'>
-					<% if(item.sender=='self' ) { %>
-						<i class="msg-user mui-icon mui-icon-person"></i>
-					<% } else { %>
-						<img class="msg-user-img" src="<%=(item.avatar)%>" alt="" />
-					<% } %>
-					<div class="msg-content">
-						<div class="msg-content-inner">
-							<% if(item.type=='text' ) { %>
-								<%=( item.content|| '&nbsp;&nbsp;') %>
-							<% } else if(item.type=='image' ) { %>
-								<img class="msg-content-image" src="<%=(item.content)%>" style="max-width: 100px;" />
-							<% } else if(item.type=='sound' ) { %>
-								<span class="mui-icon mui-icon-mic" style="font-size: 18px;font-weight: bold;"></span>
-								<span class="play-state">点击播放</span>
-							<% } %>
-						</div>
-						<div class="msg-content-arrow"></div>
-					</div>
-					<div class="mui-item-clear"></div>
-				</div>
-			<% } %>
-		</script>
+		<div id='h'>
+			
+		</div>
 		<div class="mui-content">
 			<div id='msg-list'>
 			</div>
@@ -363,7 +339,7 @@
 		</div>
 		<script src="../js/mui.min.js"></script>
 		<script src="../js/mui.imageViewer.js"></script>
-		<script src="../js/arttmpl.js"></script>
+		<script src="../js/vue.min.js"></script>
 		<script type="text/javascript" charset="utf-8">
 			(function($, doc) {
 				var MIN_SOUND_TIME = 800;
@@ -385,7 +361,6 @@
 					self.setStyle({
 						softinputMode: "adjustResize"
 					});
-					console.log(self.id)
 					var showKeyboard = function() {
 						if ($.os.ios) {
 							var webView = plus.webview.currentWebview().nativeInstanceObject();
@@ -403,7 +378,6 @@
 							//alert("ll");
 						}
 					};
-					var record = [];
 					var ui = {
 						body: doc.querySelector('body'),
 						footer: doc.querySelector('footer'),
@@ -438,6 +412,28 @@
 					var imageViewer = new $.ImageViewer('.msg-content-image', {
 						dbl: false
 					});
+					new Vue({
+						el: '#h',
+						data: {
+							record: [];
+						}
+						template: '
+						<div class="msg-item" v-for="item in record">
+							<img class="msg-user-img" :src="'http://communication.123xiaolin.cn'+item.user.avatar" />
+							<div class="msg-content">
+								<div class="msg-content-inner">
+									<template v-if="item.message_type == 1">item.message_body</template>
+									<img v-if="item.message_type == 3" class="msg-content-image" :src="item.message_body" style="max-width: 100px;" />
+									<template v-if="item.message_type == 999">
+										<span class="mui-icon mui-icon-mic" style="font-size: 18px;font-weight: bold;"></span>
+										<span class="play-state">点击播放</span>
+									</template>
+								</div>
+								<div class="msg-content-arrow"></div>
+							</div>
+							<div class="mui-item-clear"></div>
+						</div>'
+					})
 					var bindMsgList = function() {
 						//绑定数据:
 						/*tp.bind({
@@ -457,50 +453,58 @@
 						imageViewer.findAllImage();
 						ui.areaMsgList.scrollTop = ui.areaMsgList.scrollHeight + ui.areaMsgList.offsetHeight;
 					};
+					console.log(self._id)
 					// 获取聊天记录
-					mui.ajax('http://communication.123xiaolin.cn/api/message/messageRecord',{
-						dataType:'json',//服务器返回json格式数据
-						type:'post',//HTTP请求类型
-						timeout:10000,//超时时间设置为10秒；
-						data: {
-							group_id: self.id
-						},
-						headers:{
-							'Content-Type':'application/json',
-							'Authorization': localStorage.getItem("TOKEN")
-						},	              
-						success:function(resp){
-							console.log(resp)
-							
-							bindMsgList();
-						},
-						error:function(xhr,type,errorThrown){
-							console.log(type);
-						}
-					});
-					bindMsgList();
+					var getMessage = function(){
+						mui.ajax('http://communication.123xiaolin.cn/api/group/messageRecord',{
+							dataType:'json',//服务器返回json格式数据
+							type:'post',//HTTP请求类型
+							timeout:10000,//超时时间设置为10秒；
+							data: {
+								group_id: self._id
+							},
+							headers:{
+								'Content-Type':'application/json',
+								'Authorization': localStorage.getItem("TOKEN")
+							},	              
+							success:function(resp){
+								console.log(resp)
+								record = resp.data.data
+								bindMsgList();
+							},
+							error:function(xhr,type,errorThrown){
+								console.log(type);
+							}
+						});
+					};
+					getMessage();
 					window.addEventListener('resize', function() {
 						ui.areaMsgList.scrollTop = ui.areaMsgList.scrollHeight + ui.areaMsgList.offsetHeight;
 					}, false);
 					var send = function(msg) {
-						record.push(msg);
-						bindMsgList();
-						toRobot(msg.content);
+						toRobot(msg.content, msg.type);
 					};
-					var toRobot = function(info) {
-						var apiUrl = 'http://www.tuling123.com/openapi/api';
-						$.getJSON(apiUrl, {
-							"key": 'acfbca724ea1b5db96d2eef88ce677dc',
-							"info": info,
-							"userid": plus.device.uuid
-						}, function(data) {
-							//alert(JSON.stringify(data));
-							record.push({
-								sender: 'zs',
-								type: 'text',
-								content: data.text
-							});
-							bindMsgList();
+					var toRobot = function(info, type) {
+						mui.ajax('http://communication.123xiaolin.cn/api/group/sendMessage',{
+							dataType:'json',//服务器返回json格式数据
+							type:'post',//HTTP请求类型
+							timeout:10000,//超时时间设置为10秒；
+							data: {
+								group_id: self._id,
+								message_body: info,
+								message_type: type
+							},
+							headers:{
+								'Content-Type':'application/json',
+								'Authorization': localStorage.getItem("TOKEN")
+							},	              
+							success:function(resp){
+								console.log(resp.data)
+								bindMsgList();
+							},
+							error:function(xhr,type,errorThrown){
+								console.log(type);
+							}
 						});
 					};
 
@@ -546,7 +550,7 @@
 							//							event.detail.gesture.preventDefault();
 							send({
 								sender: 'self',
-								type: 'text',
+								type: 1,
 								content: ui.boxMsgText.value.replace(new RegExp('\n', 'gm'), '<br/>')
 							});
 							ui.boxMsgText.value = '';
@@ -591,7 +595,7 @@
 									cmr.captureImage(function(path) {
 										send({
 											sender: 'self',
-											type: 'image',
+											type: 3,
 											content: "file://" + plus.io.convertLocalFileSystemURL(path)
 										});
 									}, function(err) {});
@@ -600,7 +604,7 @@
 									plus.gallery.pick(function(path) {
 										send({
 											sender: 'self',
-											type: 'image',
+											type: 3,
 											content: path
 										});
 									}, function(err) {}, null);

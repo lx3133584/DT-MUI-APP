@@ -40,13 +40,15 @@
 			"css/mui.min.css"
 		],
 		"refer": [
-			"page/center.html"
+			"page/center.html",
+			"page/scan.html"
 		]
 	},
 	"page/friend.html": {
 		"resources": [
 			"image/friend_qun.png",
-			"image/friend_new.png"
+			"image/friend_new.png",
+			"css/app.css"
 		],
 		"refer": [
 			"page/message.html"
@@ -106,6 +108,15 @@
 		"resources": [
 			"js/mui.imageViewer.js",
 			"js/arttmpl.js",
+			"js/mui.min.js",
+			"fonts/mui.ttf",
+			"css/mui.min.css",
+			"css/mui.imageviewer.css",
+			"css/app.css"
+		]
+	},
+	"page/scan.html": {
+		"resources": [
 			"js/mui.min.js",
 			"fonts/mui.ttf",
 			"css/mui.min.css"
