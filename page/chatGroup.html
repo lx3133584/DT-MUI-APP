@@ -317,19 +317,19 @@
 		<pre id='h'></pre>
 		<script id='msg-template' type="text/template">
 			<% for(var i in record){ var item=record[i]; %>
-				<div class="msg-item <%= (item.sender=='self'?' msg-item-self':'') %>" msg-type='<%=(item.type)%>' msg-content='<%=(item.content)%>'>
+				<div class="msg-item <%= (item.sender=='self'?' msg-item-self':'') %>" msg-type='<%=(item.message_type)%>' msg-content='<%=(item.message_body)%>'>
 					<% if(item.sender=='self' ) { %>
 						<i class="msg-user mui-icon mui-icon-person"></i>
 					<% } else { %>
-						<img class="msg-user-img" src="<%=(item.avatar)%>" alt="" />
+						<img class="msg-user-img" src="http://communication.123xiaolin.cn<%=(item.user.avatar)%>" alt="" />
 					<% } %>
 					<div class="msg-content">
 						<div class="msg-content-inner">
-							<% if(item.type=='text' ) { %>
-								<%=( item.content|| '&nbsp;&nbsp;') %>
-							<% } else if(item.type=='image' ) { %>
-								<img class="msg-content-image" src="<%=(item.content)%>" style="max-width: 100px;" />
-							<% } else if(item.type=='sound' ) { %>
+							<% if(item.message_type == 1 ) { %>
+								<%=( item.message_body|| '&nbsp;&nbsp;') %>
+							<% } else if(item.message_type=='image' ) { %>
+								<img class="msg-content-image" src="<%=(item.message_body)%>" style="max-width: 100px;" />
+							<% } else if(item.message_type=='sound' ) { %>
 								<span class="mui-icon mui-icon-mic" style="font-size: 18px;font-weight: bold;"></span>
 								<span class="play-state">点击播放</span>
 							<% } %>
@@ -385,7 +385,6 @@
 					self.setStyle({
 						softinputMode: "adjustResize"
 					});
-					console.log(self.id)
 					var showKeyboard = function() {
 						if ($.os.ios) {
 							var webView = plus.webview.currentWebview().nativeInstanceObject();
@@ -457,50 +456,58 @@
 						imageViewer.findAllImage();
 						ui.areaMsgList.scrollTop = ui.areaMsgList.scrollHeight + ui.areaMsgList.offsetHeight;
 					};
+					console.log(self._id)
 					// 获取聊天记录
-					mui.ajax('http://communication.123xiaolin.cn/api/message/messageRecord',{
-						dataType:'json',//服务器返回json格式数据
-						type:'post',//HTTP请求类型
-						timeout:10000,//超时时间设置为10秒；
-						data: {
-							group_id: self.id
-						},
-						headers:{
-							'Content-Type':'application/json',
-							'Authorization': localStorage.getItem("TOKEN")
-						},	              
-						success:function(resp){
-							console.log(resp)
-							
-							bindMsgList();
-						},
-						error:function(xhr,type,errorThrown){
-							console.log(type);
-						}
-					});
-					bindMsgList();
+					var getMessage = function(){
+						mui.ajax('http://communication.123xiaolin.cn/api/group/messageRecord',{
+							dataType:'json',//服务器返回json格式数据
+							type:'post',//HTTP请求类型
+							timeout:10000,//超时时间设置为10秒；
+							data: {
+								group_id: self._id
+							},
+							headers:{
+								'Content-Type':'application/json',
+								'Authorization': localStorage.getItem("TOKEN")
+							},	              
+							success:function(resp){
+								console.log(resp)
+								record = resp.data.data
+								bindMsgList();
+							},
+							error:function(xhr,type,errorThrown){
+								console.log(type);
+							}
+						});
+					};
+					getMessage();
 					window.addEventListener('resize', function() {
 						ui.areaMsgList.scrollTop = ui.areaMsgList.scrollHeight + ui.areaMsgList.offsetHeight;
 					}, false);
 					var send = function(msg) {
-						record.push(msg);
-						bindMsgList();
-						toRobot(msg.content);
+						toRobot(msg.content, msg.type);
 					};
-					var toRobot = function(info) {
-						var apiUrl = 'http://www.tuling123.com/openapi/api';
-						$.getJSON(apiUrl, {
-							"key": 'acfbca724ea1b5db96d2eef88ce677dc',
-							"info": info,
-							"userid": plus.device.uuid
-						}, function(data) {
-							//alert(JSON.stringify(data));
-							record.push({
-								sender: 'zs',
-								type: 'text',
-								content: data.text
-							});
-							bindMsgList();
+					var toRobot = function(info, type) {
+						mui.ajax('http://communication.123xiaolin.cn/api/group/sendMessage',{
+							dataType:'json',//服务器返回json格式数据
+							type:'post',//HTTP请求类型
+							timeout:10000,//超时时间设置为10秒；
+							data: {
+								group_id: self._id,
+								message_body: info,
+								message_type: type
+							},
+							headers:{
+								'Content-Type':'application/json',
+								'Authorization': localStorage.getItem("TOKEN")
+							},	              
+							success:function(resp){
+								console.log(resp.data)
+								bindMsgList();
+							},
+							error:function(xhr,type,errorThrown){
+								console.log(type);
+							}
 						});
 					};
 
@@ -546,7 +553,7 @@
 							//							event.detail.gesture.preventDefault();
 							send({
 								sender: 'self',
-								type: 'text',
+								type: 1,
 								content: ui.boxMsgText.value.replace(new RegExp('\n', 'gm'), '<br/>')
 							});
 							ui.boxMsgText.value = '';
@@ -591,7 +598,7 @@
 									cmr.captureImage(function(path) {
 										send({
 											sender: 'self',
-											type: 'image',
+											type: 3,
 											content: "file://" + plus.io.convertLocalFileSystemURL(path)
 										});
 									}, function(err) {});
@@ -600,7 +607,7 @@
 									plus.gallery.pick(function(path) {
 										send({
 											sender: 'self',
-											type: 'image',
+											type: 3,
 											content: path
 										});
 									}, function(err) {}, null);

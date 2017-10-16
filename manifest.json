@@ -235,14 +235,16 @@
 					"css/mui.min.css"
 				],
 				"refer": [
-					"page/center.html"
+					"page/center.html",
+					"page/scan.html"
 				],
 				"priority": 0
 			},
 			"page/friend.html": {
 				"resources": [
 					"image/friend_qun.png",
-					"image/friend_new.png"
+					"image/friend_new.png",
+					"css/app.css"
 				],
 				"refer": [
 					"page/message.html"
@@ -309,6 +311,17 @@
 					"js/arttmpl.js",
 					"js/mui.min.js",
 					"fonts/mui.ttf",
+					"css/mui.min.css",
+					"css/mui.imageviewer.css",
+					"css/app.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"page/scan.html": {
+				"resources": [
+					"js/mui.min.js",
+					"fonts/mui.ttf",
 					"css/mui.min.css"
 				],
 				"refer": [],
@@ -347,7 +360,6 @@
 				"image/transfer1.png",
 				"image/+.png",
 				"image/item_sao.png",
-				"page/scan.html",
 				"image/friend_add.png",
 				"image/my_left.png",
 				"image/bottom6.png",
