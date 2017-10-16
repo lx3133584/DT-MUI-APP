@@ -235,7 +235,8 @@
 					"css/mui.min.css"
 				],
 				"refer": [
-					"page/center.html"
+					"page/center.html",
+					"page/scan.html"
 				],
 				"priority": 0
 			},
@@ -316,6 +317,15 @@
 				],
 				"refer": [],
 				"priority": 0
+			},
+			"page/scan.html": {
+				"resources": [
+					"js/mui.min.js",
+					"fonts/mui.ttf",
+					"css/mui.min.css"
+				],
+				"refer": [],
+				"priority": 0
 			}
 		},
 		"idle": {
@@ -350,7 +360,6 @@
 				"image/transfer1.png",
 				"image/+.png",
 				"image/item_sao.png",
-				"page/scan.html",
 				"image/friend_add.png",
 				"image/my_left.png",
 				"image/bottom6.png",

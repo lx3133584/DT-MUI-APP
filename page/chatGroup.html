@@ -415,9 +415,9 @@
 					new Vue({
 						el: '#h',
 						data: {
-							record: [];
-						}
-						template: '
+							record: []
+						},
+						template: `
 						<div class="msg-item" v-for="item in record">
 							<img class="msg-user-img" :src="'http://communication.123xiaolin.cn'+item.user.avatar" />
 							<div class="msg-content">
@@ -432,7 +432,7 @@
 								<div class="msg-content-arrow"></div>
 							</div>
 							<div class="mui-item-clear"></div>
-						</div>'
+						</div>`
 					})
 					var bindMsgList = function() {
 						//绑定数据:
